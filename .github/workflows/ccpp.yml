@@ -18,5 +18,5 @@ jobs:
 
   test:
     steps:
-      name: run test2
+    - name: run test2
       run: ls -la && cd advent2019_1a && ls -la && ./a.out
