@@ -4,13 +4,12 @@ on: [push]
 
 jobs:
   build_and_test_gcc_ubuntu:
-
     runs-on: ubuntu-latest
     timeout-minutes: 3
     
     steps:
     - uses: actions/checkout@v1
-    - name: print configure
+    - name: print environment
       run: |
         ls -la
         uname -a
@@ -25,23 +24,32 @@ jobs:
         ./a.out
 
   build_and_test_clang_ubuntu:
-
     runs-on: ubuntu-latest
     timeout-minutes: 3
     
     steps:
     - uses: actions/checkout@v1
-    - name: configure
-      run: ls -la && uname -a && clang --version
+    - name: print environment
+      run: |
+        ls -la
+        uname -a
+        clang --version
+    - name: build
+      run: |
+        cd advent2019_1a
+        clang main.cpp 
+    - name: run test
+      run: |
+        cd advent2019_1a
+        ./a.out
 
   build_and_test_gcc_mac:
-
     runs-on: macos-latest
     timeout-minutes: 3
     
     steps:
     - uses: actions/checkout@v1
-    - name: configure
+    - name: print environment
       run: ls -la && uname -a && gcc --version
     - name: build
       run: cd advent2019_1a && g++ main.cpp 
