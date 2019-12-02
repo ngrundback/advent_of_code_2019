@@ -1,11 +1,23 @@
 #include <iostream>
+#include <cmath>
 
 
 static int calculateFuel(int mass)
 {
-    int fuel = 2;
+    /* Fuel required to launch a given module is based on its mass.
+     * Specifically, to find the fuel required for a module, 
+     * take its mass, 
+     * divide by three,
+     * round down, 
+     * and subtract 2. */
+    double fuel = mass / 3.0 ;
+    //std::cout << "fuel after division by 3: " << fuel << "\n";
+    fuel = std::floor(fuel);
+    //std::cout << "fuel after rounding down: " << fuel << "\n";
+    fuel -= 2;
+    //std::cout << "fuel after subtracting 2: " << fuel << "\n";
 
-    return fuel;
+    return (int)fuel;
 }
 
 static bool runTest(int expected, int input)
@@ -31,7 +43,10 @@ static void runUnitTests()
 {
     bool result = true;
 
-    result &= runTest(2,12);
+    result &= runTest(2, 12);
+    result &= runTest(2, 14);
+    result &= runTest(654, 1969);
+    result &= runTest(33583, 100756);
 
     std::cout << "Unit tests result: " << (result ? "PASSED" : "FAILED") << "\n";
 }
