@@ -3,7 +3,7 @@ name: C/C++ Build and Test
 on: [push]
 
 jobs:
-  build:
+  build_and_test_ubuntu:
 
     runs-on: ubuntu-latest
     
@@ -15,8 +15,3 @@ jobs:
       run: ls -la && cd advent2019_1a && g++ main.cpp 
     - name: run test
       run: cd advent2019_1a && ./a.out
-
-  test:
-    steps:
-    - name: run test2
-      run: ls -la && cd advent2019_1a && ls -la && ./a.out
