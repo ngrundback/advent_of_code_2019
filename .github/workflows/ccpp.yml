@@ -37,7 +37,7 @@ jobs:
     - name: build
       run: |
         cd advent2019_1a
-        clang main.cpp 
+        clang++ main.cpp 
     - name: run test
       run: |
         cd advent2019_1a
