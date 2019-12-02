@@ -14,4 +14,9 @@ jobs:
     - name: build
       run: ls -la && cd advent2019_1a && g++ main.cpp 
     - name: run test
-      run: ./a.out
+      run: cd advent2019_1a && ./a.out
+
+  test:
+    steps:
+      name: run test2
+      run: ls -la && cd advent2019_1a && ls -la && ./a.out
