@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: C/C++ Build and Test
 
 on: [push]
 
@@ -10,10 +10,8 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: configure
-      run: ./configure
-    - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+      run: ls -la && gcc --version
+    - name: build
+      run: ls -la && cd advent2019_1a && g++ main.cpp 
+    - name: run test
+      run: ./a.out
