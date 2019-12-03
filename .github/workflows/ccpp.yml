@@ -3,7 +3,7 @@ name: C/C++ CI
 on: [push]
 
 jobs:
-  build_and_test_gcc_ubuntu:
+  build_test-gcc_ubuntu:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     
@@ -23,10 +23,10 @@ jobs:
         g++ -std=c++17 -Wall -pedantic main.cpp
     - name: run test
       run: |
-        ./advent2019_1a/a.out
-        ./advent2019_1b/a.out
+        cd $GITHUB_WORKSPACE/advent2019_1a && ./a.out
+        cd $GITHUB_WORKSPACE/advent2019_1b && ./a.out
 
-  build_and_test_clang:
+  build_test-clang:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
