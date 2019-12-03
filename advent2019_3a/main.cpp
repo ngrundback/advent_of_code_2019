@@ -2,15 +2,64 @@
 #include <vector>
 #include <string>
 #include <cmath>
+#include <sstream>
 
 int ManhattanDistanceFromOrigo(int x, int y)
 {
     return std::abs(x) + std::abs(y);
 }
 
+std::vector<std::string> splitString(const std::string& s, char delimiter)
+{
+   std::vector<std::string> tokens;
+   std::string token;
+   std::istringstream tokenStream(s);
+   while (std::getline(tokenStream, token, delimiter))
+   {
+      tokens.push_back(token);
+   }
+   return tokens;
+}
+
 static void expandPath(std::string path, std::vector<std::pair<int , int>> &steps)
 {
-    steps.push_back({1, 0});
+    // Start at origo
+    int x = 0, y = 0;
+    
+    std::vector<std::string> tokens = splitString(path, ',');
+
+    for (const auto &token: tokens)
+    {
+        char direction = token.at(0);
+        int increments = std::stoi(token.substr(1));
+        switch (direction)
+        {
+            case 'R':
+                while (increments--)
+                {
+                    steps.push_back({++x, y});
+                }
+                break;
+            case 'L':
+                while (increments--)
+                {
+                    steps.push_back({--x, y});
+                }
+                break;
+            case 'U':
+                while (increments--)
+                {
+                    steps.push_back({x, ++y});
+                }
+                break;
+            case 'D':
+                while (increments--)
+                {
+                    steps.push_back({x, --y});
+                }
+                break;
+        } 
+    }
 }
 
 bool testManhattanDistance(int expected, int x, int y)
@@ -34,33 +83,64 @@ static int getNearestIntersection(std::pair<std::string, std::string> stringPair
     return 159;
 }
 
-static bool testStepExpander(std::vector<std::pair<int, int>> expected, std::string path)
+static bool testSplitString(std::vector<std::string> expected, std::string str)
+{
+    std::vector<std::string> answer = splitString(str, ',');
+    if (expected == answer)
+    {
+        std::cout << "Split String test: '" << str << "' PASSED" << ", got: ";
+        for (auto &p: answer)
+        {
+            std::cout << "'" << p << "' ";
+        }
+        std::cout << "\n";
+        return true;
+    }
+    else
+    {
+        std::cout << "Split String test: '" << str << "' FAILED" << ", got: ";
+        for (auto &p: answer)
+        {
+            std::cout << "'" << p << "' ";
+        }
+
+        std::cout << ", expected: ";
+        for (auto &p: expected)
+        {
+            std::cout << "'" << p << "' ";
+        }
+        std::cout << "\n";        
+        return false;
+    }
+}
+
+static bool testPathExpander(std::vector<std::pair<int, int>> expected, std::string path)
 {
     std::vector<std::pair<int, int>> answer;
     expandPath(path, answer);
 
     if ( expected == answer)
     {
-        std::cout << "Step Expander test:" << " PASSED" << ", got: {";
+        std::cout << "Step Expander test: '" << path << "'" << " PASSED" << ", got: {";
         for (const auto& p : answer)
         {
-            std::cout << p.first << ", " << p.second << " ";
+            std::cout << p.first << "," << p.second << " ";
         }
         std::cout << "}\n";
         return true;
     }
     else
     {
-        std::cout << "Step Expander test:" << " FAILED" << ", got: {";
+        std::cout << "Step Expander test: '" << path << "'" " FAILED" << ", got: {";
         for (const auto& p : answer)
         {
-            std::cout << p.first << ", " << p.second << " ";
+            std::cout << p.first << "," << p.second << " ";
         } 
         
         std::cout << "}, expected: {";
         for (const auto& p : expected)
         {
-            std::cout << p.first << ", " << p.second << " ";
+            std::cout << p.first << "," << p.second << " ";
         }
         
         std::cout << "}\n";
@@ -94,11 +174,22 @@ static void runUnitTests()
     result &= testManhattanDistance(0, 0,0);
     result &= testManhattanDistance(1, 0,1);
 
-    // Test step exapander
-    std::string testPath1 = "R1";
-    std::vector<std::pair<int, int>> expectedSteps1 = {{1,0}};
-    result &= testStepExpander(expectedSteps1, testPath1);
-    result &= testStepExpander({{-1,0}}, "L1");
+    // Test SplitString
+    result &= testSplitString({"R1"}, "R1");
+    result &= testSplitString({"R1", "U1"}, "R1,U1");
+    result &= testSplitString({"R8", "U5", "L5", "D3"}, "R8,U5,L5,D3");
+
+    // Test path exapander;
+    result &= testPathExpander({{1,0}}, "R1");
+    result &= testPathExpander({{-1,0}}, "L1");
+    result &= testPathExpander({{0,1}}, "U1");
+    result &= testPathExpander({{0,-1}}, "D1");
+
+    result &= testPathExpander({{1,0}, {2,0}}, "R2");
+    result &= testPathExpander({{1,0}, {2,0}, {3,0}, {4,0}, {5,0}, {6,0}, {7,0}, {8,0}, {9,0}, {10,0}, {11,0}}, "R11");
+
+    result &= testPathExpander({{1,0}, {1,1}}, "R1,U1");
+    result &= testPathExpander({{1,0}, {1,1}, {1,2}, {0,2}, {-1,2}, {-2,2}, {-2,1}, {-2,0}, {-2,-1}, {-2,-2}}, "R1,U2,L3,D4");
 
 /*
     //std::pair<std::vector<std::string>, std::vector<std::string>> testData1
