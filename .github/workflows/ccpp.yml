@@ -72,3 +72,26 @@ jobs:
       run: |
         ./advent2019_1a/a.out
         ./advent2019_1b/a.out
+
+  build_and_test_clang:
+    runs-on: [macos-latest, ubuntu-latest]
+    timeout-minutes: 3
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: print environment
+      run: |
+        ls -la
+        uname -a
+        clang --version
+    - name: build
+      run: |
+        cd advent2019_1a
+        clang++ -std=c++17 -Wall -pedantic main.cpp
+        cd ..
+        cd advent2019_1b
+        clang++ -std=c++17 -Wall -pedantic main.cpp
+    - name: run test
+      run: |
+        cd advent2019_1a && ./a.out
+        cd advent2019_1b && ./a.out
