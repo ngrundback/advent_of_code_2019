@@ -17,7 +17,7 @@ jobs:
     - name: build
       run: |
         cd advent2019_1a
-        g++ main.cpp 
+        g++ -std=c++17 -Wall -pedantic main.cpp 
     - name: run test
       run: |
         cd advent2019_1a
@@ -37,13 +37,13 @@ jobs:
     - name: build
       run: |
         cd advent2019_1a
-        clang++ main.cpp 
+        clang++ -std=c++17 -Wall -pedantic main.cpp 
     - name: run test
       run: |
         cd advent2019_1a
         ./a.out
 
-  build_and_test_gcc_mac:
+  build_and_test_clang_mac:
     runs-on: macos-latest
     timeout-minutes: 3
     
@@ -53,11 +53,11 @@ jobs:
       run: |
         ls -la
         uname -a
-        gcc --version
+        clang --version
     - name: build
       run: |
         cd advent2019_1a
-        g++ main.cpp 
+        clang++ -std=c++17 -Wall -pedantic main.cpp 
     - name: run test
       run: |
         cd advent2019_1a
