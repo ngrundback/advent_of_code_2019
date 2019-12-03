@@ -18,10 +18,14 @@ jobs:
       run: |
         cd advent2019_1a
         g++ -std=c++17 -Wall -pedantic main.cpp 
+        cd ..
+        cd advent2019_1b
+        g++ -std=c++17 -Wall -pedantic main.cpp
     - name: run test
       run: |
-        cd advent2019_1a
-        ./a.out
+        ./advent2019_1a/a.out
+        ./advent2019_1b/a.out
+
 
   build_and_test_clang_ubuntu:
     runs-on: ubuntu-latest
@@ -37,11 +41,14 @@ jobs:
     - name: build
       run: |
         cd advent2019_1a
-        clang++ -std=c++17 -Wall -pedantic main.cpp 
+        clang++ -std=c++17 -Wall -pedantic main.cpp
+        cd ..
+        cd advent2019_1b
+        clang++ -std=c++17 -Wall -pedantic main.cpp
     - name: run test
       run: |
-        cd advent2019_1a
-        ./a.out
+        ./advent2019_1a/a.out
+        ./advent2019_1b/a.out
 
   build_and_test_clang_mac:
     runs-on: macos-latest
@@ -57,8 +64,11 @@ jobs:
     - name: build
       run: |
         cd advent2019_1a
+        clang++ -std=c++17 -Wall -pedantic main.cpp
+        cd ..
+        cd advent2019_1b
         clang++ -std=c++17 -Wall -pedantic main.cpp 
     - name: run test
       run: |
-        cd advent2019_1a
-        ./a.out
+        ./advent2019_1a/a.out
+        ./advent2019_1b/a.out
