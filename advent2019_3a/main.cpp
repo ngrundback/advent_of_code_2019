@@ -3,10 +3,11 @@
 #include <string>
 #include <cmath>
 #include <sstream>
+#include <algorithm>
 
-int ManhattanDistanceFromOrigo(int x, int y)
+int ManhattanDistanceFromOrigo(std::pair<int, int> posXY)
 {
-    return std::abs(x) + std::abs(y);
+    return std::abs(posXY.first) + std::abs(posXY.second);
 }
 
 std::vector<std::string> splitString(const std::string& s, char delimiter)
@@ -64,7 +65,7 @@ static void expandPath(std::string path, std::vector<std::pair<int , int>> &step
 
 bool testManhattanDistance(int expected, int x, int y)
 {
-    int answer = ManhattanDistanceFromOrigo(x, y);
+    int answer = ManhattanDistanceFromOrigo({x, y});
     if (expected == answer)
     {
         std::cout << "Manhattan Distance test:" << " PASSED" << ", got: " << answer << "\n";
@@ -77,10 +78,37 @@ bool testManhattanDistance(int expected, int x, int y)
     }
 }
 
-static int getNearestIntersection(std::pair<std::string, std::string> stringPair)
+std::vector<std::pair<int, int>> getAllIntersections(std::string pathA, std::string pathB)
 {
+    std::vector<std::pair<int, int>> stepsA, stepsB, result;
+    expandPath(pathA, stepsA);
+    expandPath(pathB, stepsB);
 
-    return 159;
+    for(const auto &posA: stepsA)
+    {
+        if (std::find(stepsB.begin(), stepsB.end(), posA) != stepsB.end())
+        {
+            result.push_back(posA);
+        }
+
+    }
+    return result;
+}
+
+
+static int getNearestIntersection(std::string pathA, std::string pathB)
+{
+    auto allIntersections= getAllIntersections(pathA, pathB);
+
+    int nearestIntersection = ManhattanDistanceFromOrigo(allIntersections.front());
+
+
+    for (const auto &p: allIntersections)
+    {
+        nearestIntersection = std::min(nearestIntersection, ManhattanDistanceFromOrigo(p));
+    }
+
+    return nearestIntersection;
 }
 
 static bool testSplitString(std::vector<std::string> expected, std::string str)
@@ -148,18 +176,51 @@ static bool testPathExpander(std::vector<std::pair<int, int>> expected, std::str
     }
 }
 
-static bool testNearestIntersection (int expected, std::pair<std::string, std::string> stringPair)
+static bool testGetAllIntersections(std::vector<std::pair<int, int>> expected, std::string pathA, std::string pathB)
 {
-    int answer = getNearestIntersection(stringPair);
+    std::vector<std::pair<int, int>> answer = getAllIntersections(pathA, pathB);
 
-    if (expected == answer)
+    if ( expected == answer)
     {
-        std::cout << "Nearest Intersection test:" << " PASSED" << ", got: " << answer << "\n";
+        std::cout << "Get All Intersections test: '" << pathA << "'" << " '" << pathB << "'" << " PASSED" << ", got: {";
+        for (const auto& p : answer)
+        {
+            std::cout << p.first << "," << p.second << " ";
+        }
+        std::cout << "}\n";
         return true;
     }
     else
     {
-        std::cout << "Nearest Intersection test:" << " FAILED" << ", got: " << answer << ", expected: " << expected << "\n";
+        std::cout << "Get All Intersections test: '" << pathA << "'" << " '" << pathB << "'" " FAILED" << ", got: {";
+        for (const auto& p : answer)
+        {
+            std::cout << p.first << "," << p.second << " ";
+        } 
+        
+        std::cout << "}, expected: {";
+        for (const auto& p : expected)
+        {
+            std::cout << p.first << "," << p.second << " ";
+        }
+        
+        std::cout << "}\n";
+        return false;
+    }
+}
+
+static bool testNearestIntersection(int expected, std::string pathA, std::string pathB)
+{
+    int answer = getNearestIntersection(pathA, pathB);
+
+    if (expected == answer)
+    {
+        std::cout << "Nearest Intersection test: '" << pathA << "'" << " '" << pathB << "'" << " PASSED" << ", got: " << answer << "\n";
+        return true;
+    }
+    else
+    {
+        std::cout << "Nearest Intersection test: '" << pathA << "'" << " '" << pathB << "' FAILED" << ", got: " << answer << ", expected: " << expected << "\n";
         return false;
     }
 }
@@ -191,23 +252,28 @@ static void runUnitTests()
     result &= testPathExpander({{1,0}, {1,1}}, "R1,U1");
     result &= testPathExpander({{1,0}, {1,1}, {1,2}, {0,2}, {-1,2}, {-2,2}, {-2,1}, {-2,0}, {-2,-1}, {-2,-2}}, "R1,U2,L3,D4");
 
-/*
-    //std::pair<std::vector<std::string>, std::vector<std::string>> testData1
-    std::pair<std::string, std::string> testData1, testData2, testData3;
-
-    testData1.first = "R8,U5,L5,D3";
-    testData1.second = "U7,R6,D4,L4";
-    result &= testNearestIntersection(6, testData1);
+    // Test path intersection detection
+    result &= testGetAllIntersections({{1,0}},"R1", "R1");
+    result &= testGetAllIntersections({{1,1}},"R1,U1", "U1,R1");
 
 
-    testData2.first = "R75,D30,R83,U83,L12,D49,R71,U7,L72";
-    testData2.second = "U62,R66,U55,R34,D71,R55,D58,R83";
-    result &= testNearestIntersection(159, testData2);
-    
-    testData3.first = "R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51";
-    testData3.second = "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7";
-    result &= testNearestIntersection(135, testData3);
-*/
+    // Test nearest distance of all intersections between two paths
+    result &= testNearestIntersection(1, "R1", "R1");
+    result &= testNearestIntersection(4, "R2,U2", "U2,R2");
+    result &= testNearestIntersection(5, "R4,U1", "U1,R4");
+
+    auto pathA1 = "R8,U5,L5,D3";
+    auto pathB1 = "U7,R6,D4,L4";
+    result &= testNearestIntersection(6, pathA1, pathB1);
+
+    auto pathA2  = "R75,D30,R83,U83,L12,D49,R71,U7,L72";
+    auto pathB2  = "U62,R66,U55,R34,D71,R55,D58,R83";
+    result &= testNearestIntersection(159, pathA2, pathB2);
+
+    auto pathA3 = "R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51";
+    auto pathB3 = "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7";
+    result &= testNearestIntersection(135, pathA3, pathB3);
+
     std::cout << "Unit tests result: " << (result ? "PASSED" : "FAILED") << "\n";
 }
 
