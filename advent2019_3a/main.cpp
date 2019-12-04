@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <string>
 #include <cmath>
@@ -90,7 +91,6 @@ std::vector<std::pair<int, int>> getAllIntersections(std::string pathA, std::str
         {
             result.push_back(posA);
         }
-
     }
     return result;
 }
@@ -256,7 +256,6 @@ static void runUnitTests()
     result &= testGetAllIntersections({{1,0}},"R1", "R1");
     result &= testGetAllIntersections({{1,1}},"R1,U1", "U1,R1");
 
-
     // Test nearest distance of all intersections between two paths
     result &= testNearestIntersection(1, "R1", "R1");
     result &= testNearestIntersection(4, "R2,U2", "U2,R2");
@@ -277,9 +276,30 @@ static void runUnitTests()
     std::cout << "Unit tests result: " << (result ? "PASSED" : "FAILED") << "\n";
 }
 
+static void runInputTxt()
+{
+    // Read in input.txt to a vector of strings
+    std::ifstream infile("input.txt");
+    std::string pathA, pathB;
+
+    infile >> pathA;
+    infile >> pathB;
+
+
+    std::cout << "\n---- pathA ----: " << pathA << "\n\n\n";
+    std::cout << "\n---- pathB ----: " << pathB << "\n\n\n";
+    int result = getNearestIntersection(pathA, pathB);
+
+    std::cout << "Result from input.txt: " << result << "\n";
+
+    // CORRECT ANSWER: 221
+}
+
 int main(int argc, char *argv[])
 {
     runUnitTests();
+
+    runInputTxt();
 
     return 0;
 }
